@@ -523,7 +523,7 @@ MIT License — Copyright (c) 2024 ParrySecurity
 | Channel | Link |
 |---------|------|
 | Email | alikhanuana@gmail.com
-|       | ahmii.pk@hotmail.com
+| Email | ahmii.pk@hotmail.com
 | GitHub Issues | [Create an issue](https://github.com/parrysecurity/Data-Discovery-Scanner/issues) |
 | Documentation | [Project Wiki](https://github.com/parrysecurity/Data-Discovery-Scanner/wiki) |
 
