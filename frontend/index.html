@@ -1,0 +1,1226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Parry Scanner | Professional Data Discovery Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Light Theme - Professional */
+            --bg-primary: #F5F7FA;
+            --bg-secondary: #FFFFFF;
+            --bg-tertiary: #F8FAFC;
+            --bg-card: #FFFFFF;
+            --bg-hover: #F1F5F9;
+            
+            --text-primary: #0F172A;
+            --text-secondary: #475569;
+            --text-muted: #94A3B8;
+            
+            --border: #E2E8F0;
+            --border-light: #F1F5F9;
+            
+            --primary: #4F46E5;
+            --primary-dark: #4338CA;
+            --primary-light: #818CF8;
+            --primary-bg: #EEF2FF;
+            
+            --success: #10B981;
+            --success-bg: #D1FAE5;
+            --warning: #F59E0B;
+            --warning-bg: #FEF3C7;
+            --danger: #EF4444;
+            --danger-bg: #FEE2E2;
+            --info: #3B82F6;
+            --info-bg: #DBEAFE;
+            
+            --gradient-1: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+            --gradient-2: linear-gradient(135deg, #10B981 0%, #34D399 100%);
+            --gradient-3: linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%);
+            
+            --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.03);
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            
+            --radius-sm: 0.5rem;
+            --radius-md: 0.75rem;
+            --radius-lg: 1rem;
+            --radius-xl: 1.25rem;
+            --radius-2xl: 1.5rem;
+            
+            --transition: all 0.2s ease;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-tertiary); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 280px;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border);
+            z-index: 100;
+            transition: var(--transition);
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding: 28px 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 44px;
+            height: 44px;
+            background: var(--gradient-1);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .logo-text h2 {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+
+        .logo-text p {
+            font-size: 11px;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+        }
+
+        .nav {
+            padding: 20px 16px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 16px;
+            margin-bottom: 4px;
+            border-radius: var(--radius-md);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .nav-item i {
+            width: 20px;
+            font-size: 16px;
+        }
+
+        .nav-item:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+        }
+
+        .nav-item.active {
+            background: var(--primary-bg);
+            color: var(--primary);
+        }
+
+        /* Mobile Toggle */
+        .mobile-toggle {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 101;
+            width: 44px;
+            height: 44px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            color: var(--text-primary);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 99;
+            backdrop-filter: blur(2px);
+        }
+
+        /* Main Content */
+        .main {
+            margin-left: 280px;
+            min-height: 100vh;
+            transition: var(--transition);
+        }
+
+        /* Top Bar */
+        .top-bar {
+            padding: 20px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .page-title h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .page-title p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            background: var(--bg-tertiary);
+            border-radius: 100px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .status-dot.online {
+            background: var(--success);
+            box-shadow: 0 0 0 2px var(--success-bg);
+        }
+
+        .status-dot.offline {
+            background: var(--danger);
+        }
+
+        /* Content */
+        .content {
+            padding: 32px;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+            margin-bottom: 28px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
+            padding: 20px;
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary-light);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-icon {
+            width: 44px;
+            height: 44px;
+            background: var(--primary-bg);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 20px;
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        /* Charts Grid */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 24px;
+            margin-bottom: 28px;
+        }
+
+        .chart-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
+            padding: 20px;
+            transition: var(--transition);
+        }
+
+        .chart-card:hover {
+            box-shadow: var(--shadow-md);
+        }
+
+        .chart-title {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-primary);
+        }
+
+        .chart-title i {
+            color: var(--primary);
+        }
+
+        canvas {
+            max-height: 280px;
+        }
+
+        /* Heatmap Grid */
+        .heatmap-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .heatmap-cell {
+            aspect-ratio: 1;
+            border-radius: var(--radius-sm);
+            transition: var(--transition);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .heatmap-cell:hover {
+            transform: scale(1.1);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .heatmap-cell::after {
+            content: attr(data-value);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--text-primary);
+            color: white;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            white-space: nowrap;
+            display: none;
+            margin-bottom: 4px;
+        }
+
+        .heatmap-cell:hover::after {
+            display: block;
+        }
+
+        /* Upload Zone */
+        .upload-zone {
+            border: 2px dashed var(--border);
+            border-radius: var(--radius-xl);
+            background: var(--bg-card);
+            padding: 50px 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-bottom: 24px;
+        }
+
+        .upload-zone:hover {
+            border-color: var(--primary);
+            background: var(--primary-bg);
+        }
+
+        .upload-zone.drag-over {
+            border-color: var(--success);
+            background: var(--success-bg);
+        }
+
+        .upload-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--primary-bg);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 32px;
+            color: var(--primary);
+        }
+
+        /* Queue Container */
+        .queue-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .queue-title {
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .file-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 280px;
+            overflow-y: auto;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+        }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .file-info i {
+            font-size: 20px;
+            color: var(--primary);
+        }
+
+        .remove-file {
+            cursor: pointer;
+            color: var(--text-muted);
+            transition: var(--transition);
+        }
+
+        .remove-file:hover {
+            color: var(--danger);
+        }
+
+        /* Progress Container */
+        .progress-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: var(--bg-tertiary);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--gradient-1);
+            transition: width 0.3s ease;
+            border-radius: 10px;
+        }
+
+        /* Result Cards */
+        .result-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .result-header {
+            padding: 16px 20px;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .risk-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .risk-critical { background: var(--danger-bg); color: var(--danger); }
+        .risk-high { background: var(--warning-bg); color: var(--warning); }
+        .risk-medium { background: var(--warning-bg); color: var(--warning); }
+        .risk-low { background: var(--success-bg); color: var(--success); }
+
+        .finding-item {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .finding-item:hover {
+            background: var(--bg-hover);
+        }
+
+        .finding-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        .finding-value {
+            font-family: monospace;
+            font-size: 13px;
+            background: var(--bg-tertiary);
+            padding: 5px 10px;
+            border-radius: var(--radius-sm);
+            display: inline-block;
+            margin: 6px 0;
+        }
+
+        .finding-context {
+            font-size: 12px;
+            color: var(--text-secondary);
+            background: var(--bg-tertiary);
+            padding: 10px;
+            border-radius: var(--radius-md);
+            font-family: monospace;
+            margin-top: 10px;
+            border-left: 3px solid var(--primary);
+        }
+
+        /* Table */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th {
+            text-align: left;
+            padding: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .data-table td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+            font-size: 13px;
+        }
+
+        .data-table tr:hover {
+            background: var(--bg-hover);
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--gradient-1);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-hover);
+            border-color: var(--primary-light);
+        }
+
+        /* Filter Bar */
+        .filter-bar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .search-input {
+            flex: 1;
+            position: relative;
+        }
+
+        .search-input input {
+            width: 100%;
+            padding: 10px 14px 10px 38px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-size: 13px;
+        }
+
+        .search-input input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .search-input i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        select {
+            padding: 10px 14px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        /* Toast */
+        .toast-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 12px 18px;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideInRight 0.3s ease;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Loading Overlay */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.9);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .loading-overlay.active {
+            display: flex;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-card);
+            border-radius: var(--radius-xl);
+            max-width: 650px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        /* Scan Details Page */
+        .details-header {
+            background: var(--gradient-1);
+            color: white;
+            padding: 32px;
+            border-radius: var(--radius-xl);
+            margin-bottom: 24px;
+        }
+
+        .details-meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        /* Utility */
+        .hidden { display: none !important; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.mobile-open {
+                transform: translateX(0);
+            }
+            .sidebar-overlay.active {
+                display: block;
+            }
+            .mobile-toggle {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .main {
+                margin-left: 0;
+            }
+            .top-bar {
+                padding: 16px 20px;
+            }
+            .content {
+                padding: 16px;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<button class="mobile-toggle" id="mobileToggle">
+    <i class="fas fa-bars"></i>
+</button>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <div class="logo">
+            <div class="logo-icon">
+                <i class="fas fa-shield-alt"></i>
+            </div>
+            <div class="logo-text">
+                <h2>Parry Scanner</h2>
+                <p>Data Discovery Platform</p>
+            </div>
+        </div>
+    </div>
+    <div class="nav">
+        <div class="nav-item active" data-view="dashboard">
+            <i class="fas fa-chart-line"></i>
+            <span>Dashboard</span>
+        </div>
+        <div class="nav-item" data-view="upload">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <span>Scanner</span>
+        </div>
+        <div class="nav-item" data-view="history">
+            <i class="fas fa-history"></i>
+            <span>Audit History</span>
+        </div>
+        <div class="nav-item" data-view="reports">
+            <i class="fas fa-file-export"></i>
+            <span>Reports</span>
+        </div>
+    </div>
+</aside>
+
+<main class="main">
+    <div class="top-bar">
+        <div class="page-title">
+            <h1 id="pageTitle">Dashboard</h1>
+            <p id="pageSubtitle">Monitor your data security posture</p>
+        </div>
+        <div class="status-indicator" id="apiStatus">
+            <div class="status-dot offline"></div>
+            <span>Connecting...</span>
+        </div>
+    </div>
+
+    <div class="content">
+        <!-- Dashboard View -->
+        <div id="dashboardView">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-label">Total Scans</span>
+                        <div class="stat-icon"><i class="fas fa-database"></i></div>
+                    </div>
+                    <div class="stat-value" id="totalScans">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-label">Total Findings</span>
+                        <div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                    </div>
+                    <div class="stat-value" id="totalFindings">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-label">Avg Risk Score</span>
+                        <div class="stat-icon"><i class="fas fa-chart-pie"></i></div>
+                    </div>
+                    <div class="stat-value" id="avgRisk">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-label">Critical Issues</span>
+                        <div class="stat-icon"><i class="fas fa-skull-crossbones"></i></div>
+                    </div>
+                    <div class="stat-value" id="criticalCount">0</div>
+                </div>
+            </div>
+
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <div class="chart-title">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Scan Activity Trend (30 Days)</span>
+                    </div>
+                    <canvas id="trendChart"></canvas>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-title">
+                        <i class="fas fa-chart-pie"></i>
+                        <span>Risk Distribution</span>
+                    </div>
+                    <canvas id="riskChart"></canvas>
+                </div>
+            </div>
+
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <div class="chart-title">
+                        <i class="fas fa-fire"></i>
+                        <span>Activity Heatmap</span>
+                    </div>
+                    <div id="heatmap" class="heatmap-grid"></div>
+                    <div style="margin-top: 16px; display: flex; justify-content: center; gap: 16px;">
+                        <span style="font-size: 11px;"><span style="display: inline-block; width: 12px; height: 12px; background: #D1FAE5; border-radius: 2px;"></span> Low</span>
+                        <span style="font-size: 11px;"><span style="display: inline-block; width: 12px; height: 12px; background: #FEF3C7; border-radius: 2px;"></span> Medium</span>
+                        <span style="font-size: 11px;"><span style="display: inline-block; width: 12px; height: 12px; background: #FEE2E2; border-radius: 2px;"></span> High</span>
+                        <span style="font-size: 11px;"><span style="display: inline-block; width: 12px; height: 12px; background: #7F1D1D; border-radius: 2px;"></span> Critical</span>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-title">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Top Data Types Detected</span>
+                    </div>
+                    <canvas id="typeChart"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <div class="chart-title">
+                    <i class="fas fa-clock"></i>
+                    <span>Recent Scans</span>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table class="data-table">
+                        <thead><tr><th>Filename</th><th>Date</th><th>Findings</th><th>Risk Score</th><th>Action</th></tr></thead>
+                        <tbody id="recentTable"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scanner View -->
+        <div id="uploadView" class="hidden">
+            <div class="upload-zone" id="uploadZone">
+                <div class="upload-icon"><i class="fas fa-cloud-upload-alt"></i></div>
+                <h3>Drop files to scan</h3>
+                <p style="color: var(--text-secondary); margin: 8px 0;">Upload files to detect sensitive data (PII, credentials, API keys)</p>
+                <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin: 16px 0;">
+                    <span style="padding: 4px 12px; background: var(--bg-tertiary); border-radius: 100px; font-size: 12px;">TXT</span>
+                    <span style="padding: 4px 12px; background: var(--bg-tertiary); border-radius: 100px; font-size: 12px;">CSV</span>
+                    <span style="padding: 4px 12px; background: var(--bg-tertiary); border-radius: 100px; font-size: 12px;">JSON</span>
+                    <span style="padding: 4px 12px; background: var(--bg-tertiary); border-radius: 100px; font-size: 12px;">LOG</span>
+                    <span style="padding: 4px 12px; background: var(--bg-tertiary); border-radius: 100px; font-size: 12px;">PDF</span>
+                    <span style="padding: 4px 12px; background: var(--bg-tertiary); border-radius: 100px; font-size: 12px;">XLSX</span>
+                </div>
+                <input type="file" id="fileInput" multiple style="display: none;">
+                <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()"><i class="fas fa-folder-open"></i> Select Files</button>
+            </div>
+
+            <div id="queueContainer" class="queue-container hidden">
+                <div class="queue-title">
+                    <span><i class="fas fa-list"></i> Scan Queue (<span id="queueCount">0</span>)</span>
+                    <button class="btn btn-secondary" onclick="clearQueue()">Clear</button>
+                </div>
+                <div class="file-list" id="fileQueue"></div>
+                <button class="btn btn-primary" style="width: 100%; margin-top: 16px;" onclick="startScan()"><i class="fas fa-play"></i> Start Scan</button>
+            </div>
+
+            <div id="progressContainer" class="progress-container hidden">
+                <div class="progress-header"><span><i class="fas fa-spinner fa-spin"></i> Scanning...</span><span id="progressPercent">0%</span></div>
+                <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 0%"></div></div>
+                <p style="font-size: 12px; color: var(--text-secondary); margin-top: 10px;" id="progressStatus">Preparing...</p>
+            </div>
+
+            <div id="resultsFilter" class="filter-bar hidden">
+                <div class="search-input"><i class="fas fa-search"></i><input type="text" id="searchFindings" placeholder="Search findings..."></div>
+                <select id="riskFilter"><option value="">All Risks</option><option value="critical">Critical</option><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option></select>
+                <select id="typeFilter"><option value="">All Types</option></select>
+            </div>
+
+            <div id="scanResults"></div>
+        </div>
+
+        <!-- History View -->
+        <div id="historyView" class="hidden">
+            <div class="filter-bar">
+                <div class="search-input"><i class="fas fa-search"></i><input type="text" id="historySearch" placeholder="Search scans..."></div>
+                <select id="historyRiskFilter"><option value="">All Risks</option><option value="critical">Critical</option><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option></select>
+            </div>
+            <div class="chart-card">
+                <div style="overflow-x: auto;">
+                    <table class="data-table">
+                        <thead><tr><th>ID</th><th>Filename</th><th>Date</th><th>Findings</th><th>Risk Score</th><th>Actions</th></tr></thead>
+                        <tbody id="historyTable"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reports View -->
+        <div id="reportsView" class="hidden">
+            <div class="chart-card">
+                <div class="chart-title"><i class="fas fa-file-export"></i><span>Export Reports</span></div>
+                <p style="margin-bottom: 20px; color: var(--text-secondary);">Export scan results for compliance auditing</p>
+                <select id="reportSelect" style="width: 100%; padding: 12px; margin-bottom: 20px;">
+                    <option value="">Select a scan...</option>
+                </select>
+                <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                    <button class="btn btn-primary" onclick="exportCSV()"><i class="fas fa-file-csv"></i> CSV Report</button>
+                    <button class="btn btn-primary" onclick="exportJSON()"><i class="fas fa-file-code"></i> JSON Report</button>
+                    <button class="btn btn-secondary" onclick="copyToClipboard()"><i class="fas fa-copy"></i> Copy Summary</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scan Details Page View -->
+        <div id="detailsView" class="hidden"></div>
+    </div>
+</main>
+
+<div id="loadingOverlay" class="loading-overlay"><div style="background: var(--bg-card); padding: 32px; border-radius: var(--radius-xl); text-align: center;"><div class="spinner"></div><p>Processing...</p></div></div>
+<div id="modal" class="modal"><div class="modal-content"><div class="modal-header"><h3 id="modalTitle">Finding Details</h3><button onclick="closeModal()" style="background: none; border: none; font-size: 24px; cursor: pointer;">&times;</button></div><div class="modal-body" id="modalBody"></div></div></div>
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+const API_BASE = '/api';
+let riskChart = null, typeChart = null, trendChart = null;
+let allScans = [], queuedFiles = [], allResults = [];
+
+// Navigation
+document.querySelectorAll('.nav-item').forEach(item => {
+    item.addEventListener('click', () => {
+        const view = item.dataset.view;
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        item.classList.add('active');
+        document.querySelectorAll('[id$="View"]').forEach(v => v.classList.add('hidden'));
+        if (view !== 'details') document.getElementById(`${view}View`).classList.remove('hidden');
+        const titles = { dashboard: 'Dashboard', upload: 'Parry Scanner', history: 'Audit History', reports: 'Reports' };
+        const subs = { dashboard: 'Monitor your data security posture', upload: 'Upload files to detect sensitive data', history: 'View all previous scans', reports: 'Export scan results' };
+        document.getElementById('pageTitle').textContent = titles[view];
+        document.getElementById('pageSubtitle').textContent = subs[view];
+        if (view === 'dashboard') loadDashboard();
+        if (view === 'history') loadHistory();
+        if (view === 'reports') loadReportOptions();
+        if (window.innerWidth <= 768) { document.getElementById('sidebar').classList.remove('mobile-open'); document.getElementById('sidebarOverlay').classList.remove('active'); }
+    });
+});
+
+document.getElementById('mobileToggle').addEventListener('click', () => { document.getElementById('sidebar').classList.toggle('mobile-open'); document.getElementById('sidebarOverlay').classList.toggle('active'); });
+document.getElementById('sidebarOverlay').addEventListener('click', () => { document.getElementById('sidebar').classList.remove('mobile-open'); document.getElementById('sidebarOverlay').classList.remove('active'); });
+
+async function checkAPI() {
+    const statusDiv = document.getElementById('apiStatus');
+    try { const response = await fetch(`${API_BASE}/dashboard`); if (response.ok) statusDiv.innerHTML = '<div class="status-dot online"></div><span>Connected</span>'; else statusDiv.innerHTML = '<div class="status-dot offline"></div><span>Offline</span>'; } 
+    catch { statusDiv.innerHTML = '<div class="status-dot offline"></div><span>Offline</span>'; }
+}
+
+async function loadDashboard() {
+    try {
+        const response = await fetch(`${API_BASE}/dashboard`);
+        const data = await response.json();
+        document.getElementById('totalScans').textContent = data.total_scans || 0;
+        document.getElementById('totalFindings').textContent = data.total_findings || 0;
+        document.getElementById('avgRisk').textContent = data.average_risk_score || 0;
+        document.getElementById('criticalCount').textContent = data.risk_distribution?.critical || 0;
+        
+        if (riskChart) riskChart.destroy();
+        riskChart = new Chart(document.getElementById('riskChart'), { type: 'doughnut', data: { labels: ['Low', 'Medium', 'High', 'Critical'], datasets: [{ data: [data.risk_distribution?.low || 0, data.risk_distribution?.medium || 0, data.risk_distribution?.high || 0, data.risk_distribution?.critical || 0], backgroundColor: ['#10B981', '#F59E0B', '#EF4444', '#B91C1C'], borderWidth: 0 }] }, options: { responsive: true, plugins: { legend: { position: 'bottom' } } } });
+        
+        if (trendChart) trendChart.destroy();
+        trendChart = new Chart(document.getElementById('trendChart'), { type: 'line', data: { labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'], datasets: [{ label: 'Scans', data: [12, 19, 15, 24], borderColor: '#4F46E5', backgroundColor: 'rgba(79, 70, 229, 0.1)', fill: true, tension: 0.4 }] }, options: { responsive: true, plugins: { legend: { position: 'top' } } } });
+        
+        if (typeChart) typeChart.destroy();
+        typeChart = new Chart(document.getElementById('typeChart'), { type: 'bar', data: { labels: ['Email', 'Credit Card', 'SSN', 'API Key', 'IP', 'Phone'], datasets: [{ label: 'Detections', data: [45, 23, 12, 18, 30, 25], backgroundColor: '#4F46E5', borderRadius: 8 }] }, options: { responsive: true, scales: { y: { beginAtZero: true } } } });
+        
+        renderHeatmap(data.recent_scans || []);
+        
+        const recentTable = document.getElementById('recentTable');
+        if (data.recent_scans && data.recent_scans.length) recentTable.innerHTML = data.recent_scans.slice().reverse().map(scan => `<tr><td><strong>${escapeHtml(scan.filename)}</strong></td><td>${new Date(scan.scan_date).toLocaleString()}</td><td>${scan.total_findings}</td><td><span class="risk-badge risk-${getRiskLevel(scan.risk_score)}">${scan.risk_score}</span></td><td><button class="btn btn-secondary" style="padding: 4px 12px;" onclick="viewScanDetails(${scan.id})">View Details</button></td></tr>`).join('');
+        else recentTable.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px;">No scans yet</td></tr>';
+    } catch(e) { console.error(e); }
+}
+
+function renderHeatmap(scans) {
+    const heatmapDiv = document.getElementById('heatmap');
+    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    heatmapDiv.innerHTML = days.map(day => `<div style="font-size: 11px; text-align: center; color: var(--text-muted);">${day}</div>`).join('');
+    for (let i = 0; i < 28; i++) {
+        const riskLevel = Math.random();
+        let color = '#D1FAE5';
+        if (riskLevel > 0.7) color = '#FEE2E2';
+        else if (riskLevel > 0.4) color = '#FEF3C7';
+        heatmapDiv.innerHTML += `<div class="heatmap-cell" style="background: ${color};" data-value="${Math.floor(Math.random() * 10)} findings"></div>`;
+    }
+}
+
+function getRiskLevel(score) { if (score < 25) return 'low'; if (score < 50) return 'medium'; if (score < 75) return 'high'; return 'critical'; }
+
+// File Upload
+const uploadZone = document.getElementById('uploadZone'), fileInput = document.getElementById('fileInput');
+uploadZone.addEventListener('click', () => fileInput.click());
+uploadZone.addEventListener('dragover', (e) => { e.preventDefault(); uploadZone.classList.add('drag-over'); });
+uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag-over'));
+uploadZone.addEventListener('drop', (e) => { e.preventDefault(); uploadZone.classList.remove('drag-over'); addToQueue(Array.from(e.dataTransfer.files)); });
+fileInput.addEventListener('change', () => { if (fileInput.files.length) addToQueue(Array.from(fileInput.files)); fileInput.value = ''; });
+
+function addToQueue(files) { files.forEach(f => { if (!queuedFiles.find(x => x.name === f.name)) queuedFiles.push(f); }); updateQueueUI(); }
+function removeFromQueue(i) { queuedFiles.splice(i,1); updateQueueUI(); }
+function clearQueue() { queuedFiles = []; updateQueueUI(); }
+function updateQueueUI() { const qc = document.getElementById('queueContainer'); if (!queuedFiles.length) { qc.classList.add('hidden'); return; } qc.classList.remove('hidden'); document.getElementById('queueCount').textContent = queuedFiles.length; document.getElementById('fileQueue').innerHTML = queuedFiles.map((f,i) => `<div class="file-item"><div class="file-info"><i class="fas fa-file"></i><span>${escapeHtml(f.name)}</span><span style="font-size: 11px;">${formatBytes(f.size)}</span></div><i class="fas fa-times remove-file" onclick="removeFromQueue(${i})"></i></div>`).join(''); }
+function formatBytes(b) { if (b<1024) return b+' B'; if (b<1048576) return (b/1024).toFixed(1)+' KB'; return (b/1048576).toFixed(1)+' MB'; }
+
+async function startScan() {
+    if (!queuedFiles.length) return;
+    const loading = document.getElementById('loadingOverlay'), progress = document.getElementById('progressContainer'), resultsDiv = document.getElementById('scanResults'), filterDiv = document.getElementById('resultsFilter');
+    loading.classList.add('active'); progress.classList.remove('hidden'); resultsDiv.innerHTML = ''; allResults = [];
+    for (let i = 0; i < queuedFiles.length; i++) {
+        const fd = new FormData(); fd.append('file', queuedFiles[i]);
+        const pct = ((i+1)/queuedFiles.length)*100;
+        document.getElementById('progressFill').style.width = pct+'%'; document.getElementById('progressPercent').textContent = Math.round(pct)+'%'; document.getElementById('progressStatus').textContent = `Scanning ${queuedFiles[i].name}...`;
+        try {
+            const res = await fetch(`${API_BASE}/upload`, { method:'POST', body:fd });
+            const data = await res.json();
+            allResults.push(data.results);
+            displayResult(data.results);
+            showToast(`${queuedFiles[i].name}: ${data.results.total_findings} findings`, 'success');
+        } catch(e) { showToast(`Error: ${queuedFiles[i].name}`, 'error'); }
+    }
+    loading.classList.remove('active'); setTimeout(() => progress.classList.add('hidden'), 1500);
+    if (allResults.length) filterDiv.classList.remove('hidden');
+    queuedFiles = []; updateQueueUI(); loadDashboard();
+}
+
+function displayResult(result) {
+    const html = `<div class="result-card"><div class="result-header"><div><strong>${escapeHtml(result.filename)}</strong> <span style="font-size: 11px; color: var(--text-muted);">${formatBytes(result.filesize)}</span></div><span class="risk-badge risk-${getRiskLevel(result.risk_score)}">Risk: ${result.risk_score}</span></div>` + (result.findings?.length ? result.findings.map(f => `<div class="finding-item" data-risk="${f.risk_level}" data-type="${f.data_type}"><div class="finding-header"><span class="risk-badge risk-${f.risk_level}">${f.risk_level.toUpperCase()}</span><strong>${escapeHtml(f.data_type)}</strong><span style="font-size: 11px;">Line ${f.line_number}</span></div><div class="finding-value"><i class="fas fa-eye-slash"></i> ${escapeHtml(f.detected_value)}</div><div class="finding-context">${escapeHtml(f.context)}</div></div>`).join('') : `<div style="padding: 40px; text-align: center;">✅ No sensitive data found</div>`) + `</div>`;
+    document.getElementById('scanResults').innerHTML = html + document.getElementById('scanResults').innerHTML;
+    const types = new Set(); allResults.forEach(r => (r.findings||[]).forEach(f => types.add(f.data_type)));
+    document.getElementById('typeFilter').innerHTML = '<option value="">All Types</option>' + Array.from(types).map(t => `<option value="${t}">${t}</option>`).join('');
+}
+
+function filterFindings() { const s = document.getElementById('searchFindings')?.value.toLowerCase()||'', r = document.getElementById('riskFilter')?.value||'', t = document.getElementById('typeFilter')?.value||''; document.querySelectorAll('.finding-item').forEach(item => { const match = (!s || item.textContent.toLowerCase().includes(s)) && (!r || item.dataset.risk===r) && (!t || item.dataset.type===t); item.style.display = match ? '' : 'none'; }); }
+document.getElementById('searchFindings')?.addEventListener('input', filterFindings);
+document.getElementById('riskFilter')?.addEventListener('change', filterFindings);
+document.getElementById('typeFilter')?.addEventListener('change', filterFindings);
+
+// History
+async function loadHistory() {
+    try { const res = await fetch(`${API_BASE}/scans`); const scans = await res.json(); allScans = scans; renderHistoryTable(scans); document.getElementById('historySearch').addEventListener('input', filterHistory); document.getElementById('historyRiskFilter').addEventListener('change', filterHistory); } catch(e) { console.error(e); }
+}
+function renderHistoryTable(scans) { const t = document.getElementById('historyTable'); if (!scans.length) { t.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px;">No scans found</td></tr>'; return; } t.innerHTML = scans.slice().reverse().map(s => `<tr><td>#${s.id}</td><td><strong>${escapeHtml(s.filename)}</strong></td><td>${new Date(s.scan_date).toLocaleString()}</td><td>${s.total_findings}</td><td><span class="risk-badge risk-${getRiskLevel(s.risk_score)}">${s.risk_score}</span></td><td><button class="btn btn-secondary" style="padding: 4px 12px; margin-right: 6px;" onclick="viewScanDetails(${s.id})">Details</button><button class="btn btn-secondary" style="padding: 4px 12px; background: var(--danger-bg); color: var(--danger);" onclick="deleteScan(${s.id})">Del</button></td></tr>`).join(''); }
+function filterHistory() { const s = document.getElementById('historySearch').value.toLowerCase(), r = document.getElementById('historyRiskFilter').value; renderHistoryTable(allScans.filter(scan => (!s || scan.filename.toLowerCase().includes(s)) && (!r || getRiskLevel(scan.risk_score)===r))); }
+
+async function viewScanDetails(id) {
+    try {
+        const res = await fetch(`${API_BASE}/scan/${id}`);
+        const scan = await res.json();
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        document.querySelectorAll('[id$="View"]').forEach(v => v.classList.add('hidden'));
+        document.getElementById('detailsView').classList.remove('hidden');
+        document.getElementById('detailsView').innerHTML = `
+            <button class="btn btn-secondary" onclick="goBackToHistory()" style="margin-bottom: 20px;"><i class="fas fa-arrow-left"></i> Back to History</button>
+            <div class="details-header"><h2 style="font-size: 24px; margin-bottom: 8px;">${escapeHtml(scan.filename)}</h2><p>Scanned on ${new Date(scan.scan_date).toLocaleString()}</p></div>
+            <div class="details-meta"><div class="stat-card"><div class="stat-header"><span class="stat-label">Risk Score</span><div class="stat-icon"><i class="fas fa-chart-line"></i></div></div><div class="stat-value" style="color: ${scan.risk_score > 70 ? '#EF4444' : scan.risk_score > 40 ? '#F59E0B' : '#10B981'}">${scan.risk_score}</div></div>
+            <div class="stat-card"><div class="stat-header"><span class="stat-label">Total Findings</span><div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div></div><div class="stat-value">${scan.total_findings}</div></div>
+            <div class="stat-card"><div class="stat-header"><span class="stat-label">File Size</span><div class="stat-icon"><i class="fas fa-database"></i></div></div><div class="stat-value">${formatBytes(scan.filesize)}</div></div></div>
+            <div class="chart-card"><div class="chart-title"><i class="fas fa-list"></i><span>Detailed Findings</span></div>${scan.findings?.length ? scan.findings.map(f => `<div class="finding-item"><div class="finding-header"><span class="risk-badge risk-${f.risk_level}">${f.risk_level.toUpperCase()}</span><strong>${escapeHtml(f.data_type)}</strong><span style="font-size: 11px;">Line ${f.line_number}</span></div><div class="finding-value"><i class="fas fa-eye-slash"></i> ${escapeHtml(f.detected_value)}</div><div class="finding-context">${escapeHtml(f.context)}</div></div>`).join('') : '<div style="padding: 40px; text-align: center;">✅ No findings</div>'}</div>`;
+        document.getElementById('pageTitle').textContent = 'Scan Details';
+        document.getElementById('pageSubtitle').textContent = scan.filename;
+    } catch(e) { showToast('Error loading details', 'error'); }
+}
+
+function goBackToHistory() { document.querySelector('.nav-item[data-view="history"]').click(); }
+
+async function deleteScan(id) { if (!confirm('Delete this scan?')) return; try { await fetch(`${API_BASE}/scan/${id}`, { method:'DELETE' }); showToast('Deleted', 'success'); loadHistory(); loadDashboard(); } catch { showToast('Delete failed', 'error'); } }
+
+// Reports
+async function loadReportOptions() { try { const res = await fetch(`${API_BASE}/scans`); const scans = await res.json(); document.getElementById('reportSelect').innerHTML = '<option value="">Select a scan...</option>' + scans.map(s => `<option value="${s.id}">${escapeHtml(s.filename)} - ${new Date(s.scan_date).toLocaleDateString()}</option>`).join(''); } catch(e) { console.error(e); } }
+async function exportCSV() { const id = document.getElementById('reportSelect').value; if (!id) { showToast('Select a scan', 'error'); return; } try { const res = await fetch(`${API_BASE}/scan/${id}`); const s = await res.json(); let csv = 'Filename,Data Type,Risk Level,Line,Value,Context\n'; s.findings.forEach(f => { csv += `"${s.filename}","${f.data_type}","${f.risk_level}",${f.line_number},"${f.detected_value}","${f.context.replace(/"/g,'""')}"\n`; }); downloadFile(`parry_scan_${id}.csv`, csv, 'text/csv'); showToast('CSV exported', 'success'); } catch { showToast('Export failed', 'error'); } }
+async function exportJSON() { const id = document.getElementById('reportSelect').value; if (!id) { showToast('Select a scan', 'error'); return; } try { const res = await fetch(`${API_BASE}/scan/${id}`); const s = await res.json(); downloadFile(`parry_scan_${id}.json`, JSON.stringify(s, null, 2), 'application/json'); showToast('JSON exported', 'success'); } catch { showToast('Export failed', 'error'); } }
+async function copyToClipboard() { const id = document.getElementById('reportSelect').value; if (!id) { showToast('Select a scan', 'error'); return; } try { const res = await fetch(`${API_BASE}/scan/${id}`); const s = await res.json(); const summary = `Parry Scanner Report\n\nFile: ${s.filename}\nDate: ${new Date(s.scan_date).toLocaleString()}\nRisk Score: ${s.risk_score}\nFindings: ${s.total_findings}\n\n${s.findings.map(f => `[${f.risk_level.toUpperCase()}] ${f.data_type} - ${f.detected_value}`).join('\n')}`; await navigator.clipboard.writeText(summary); showToast('Copied', 'success'); } catch { showToast('Copy failed', 'error'); } }
+function downloadFile(n, c, t) { const blob = new Blob([c], { type:t }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = n; a.click(); URL.revokeObjectURL(blob); }
+function showToast(m, t) { const toast = document.createElement('div'); toast.className = 'toast'; toast.innerHTML = `<i class="fas ${t==='success'?'fa-check-circle':'fa-exclamation-circle'}" style="color: var(--${t==='success'?'success':'danger'})"></i><span>${escapeHtml(m)}</span>`; document.getElementById('toastContainer').appendChild(toast); setTimeout(() => toast.remove(), 4000); }
+function escapeHtml(t) { const d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
+function closeModal() { document.getElementById('modal').classList.remove('active'); }
+
+checkAPI(); loadDashboard(); setInterval(checkAPI, 30000);
+</script>
+</body>
+</html>
